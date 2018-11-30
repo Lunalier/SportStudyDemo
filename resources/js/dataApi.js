@@ -74,6 +74,9 @@
          */
         getMatchOdds: function (mid, cb) {
             doRequest({fn: 1206, mid: mid}, cb);
+        },
+        getMatchEvent: function(mid,cb) {
+            doRequest({fn: 1105, mid: mid}, cb);
         }
     };
 

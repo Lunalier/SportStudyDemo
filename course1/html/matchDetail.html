@@ -5,6 +5,127 @@
     <title>彩猫体育</title>
     <link href="../../resources/css/base.css" rel="stylesheet">
     <link href="../../resources/css/matchDetail.css" rel="stylesheet">
+    <script src="../../resources/lib/jquery3.3.1.js"></script>
+    <script src="../../resources/js/dataApi.js"></script>
+    <script src="../../resources/js/core.js"></script>
+    <script src="../../resources/lib/template-web.js"></script>
+    <script id="match-head-template" type="text/template">
+         <div class="match-info-host">
+        <div class="team-logo-box">
+            <img src="<%=match.hostLogo%>">
+        </div>
+        <p><%=match.hostName%>(主)</p>
+    </div>
+    <div class="match-info-time">
+        <div class="match-info-time-box">
+            <p><%=match.hostGoal%>-<%=match.guestGoal%></p>
+        </div>
+        <p>{{match.matchTime.substring(5)}}</p>
+    </div>
+    <div class="match-info-guest">
+        <div class="team-logo-box">
+            <img src="<%=match.guestLogo%>">
+        </div>
+        <p><%=match.guestName%>(客)</p>
+    </div>
+    </script>
+     <script id="m_template" type="text/template">
+         <% for(var i = 0 ; i < event.length ; i++) {
+        var e = event[i];
+        %>
+             <li class="m3_li">
+                        <div id="m3_host">
+                             <%if(e.act=="0"){%>
+                                <span><%=e.userName%></span>
+                                <%switch(e.event){
+                                    case "1":%><img src="../../resources/images/football/label_goal.png"><%break;
+                                    case "2":%><img src="../../resources/images/football/label_penalty.png"><%break;
+                                    case "3":%><img src="../../resources/images/football/label_oolong.png"><%break;
+                                    case "4":%><img src="../../resources/images/football/label_yellowc.png"><%break;
+                                    case "5":%><img src="../../resources/images/football/label_redc.png"><%break;
+                                    case "6":%><img src="../../resources/images/football/label_-04.png"><%break;
+                                    case "7":%><img src="../../resources/images/football/label_changeinto.png"><%break;
+                                    default:
+                                        %><img src="../../resources/images/football/defaultTeam.png"><%
+                                }%>
+                            <% } %>
+                        </div>
+                        <div id="m3_mid"><%=e.time%></div>
+                        <dir id="m3_guest">
+                              <%if(e.act=="1"){%>
+                                <span><%=e.userName%></span>
+                                <%switch(e.event){
+                                    case "1":%><img src="../../resources/images/football/label_goal.png"><%break;
+                                    case "2":%><img src="../../resources/images/football/label_penalty.png"><%break;
+                                    case "3":%><img src="../../resources/images/football/label_oolong.png"><%break;
+                                    case "4":%><img src="../../resources/images/football/label_yellowc.png"><%break;
+                                    case "5":%><img src="../../resources/images/football/label_redc.png"><%break;
+                                    case "6":%><img src="../../resources/images/football/label_-04.png"><%break;
+                                    case "7":%><img src="../../resources/images/football/label_changeinto.png"><%break;
+                                    default:
+                                        %><img src="../../resources/images/football/defaultTeam.png"><%
+                                }%>
+                            <% } %>
+                        </dir>
+            </li>
+        <% } %>
+    </script>
+    <script id="t_template" type="text/template">
+         <li class="m5_li">
+                        <div id="m5_host">{{data.shootNum.split(",")[0]}}</div>
+                        <div id="m5_mid">射门</div>
+                        <div id="m5_guest">{{data.shootNum.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.shootTarget.split(",")[0]}}</div>
+                        <div id="m5_mid">射正</div>
+                        <div id="m5_guest">{{data.shootTarget.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.foulNum.split(",")[0]}}</div>
+                        <div id="m5_mid">犯规</div>
+                        <div id="m5_guest">{{data.foulNum.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.yellowCard.split(",")[0]}}</div>
+                        <div id="m5_mid">黄牌</div>
+                        <div id="m5_guest">{{data.yellowCard.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.offsideNum.split(",")[0]}}</div>
+                        <div id="m5_mid">越位</div>
+                        <div id="m5_guest">{{data.offsideNum.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.cornerNum.split(",")[0]}}</div>
+                        <div id="m5_mid">角球</div>
+                        <div id="m5_guest">{{data.cornerNum.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.controlTime.split(",")[0]}}</div>
+                        <div id="m5_mid">控球时间</div>
+                        <div id="m5_guest">{{data.controlTime.split(",")[1]}}</div>
+                    </li>
+                    <li class="m5_li">
+                        <div id="m5_host">{{data.saveNum.split(",")[0]}}</div>
+                        <div id="m5_mid">救球</div>
+                        <div id="m5_guest">{{data.saveNum.split(",")[1]}}</div>
+                    </li>
+    </script>
+    <script type="text/javascript">
+        $(function(){
+            var mid=Core.getParam("mid");
+            CaimaoDataApi.getMatchDetail(mid,function(data){
+                console.log("头信息",data);
+                $("#match-info").html(template('match-head-template',data));
+            });
+            CaimaoDataApi.getMatchEvent(mid,function(data){
+                console.log("赛况",data);
+                $("#m3_ul").html(template('m_template',data));
+                $("#m5_ul").html(template('t_template',data));
+            });
+        })
+    </script>
     <style type="text/css">
         .match-info {
             width: 100%;
@@ -80,7 +201,7 @@
             color: #f4f022;
         }
 
-        .match-tab {
+       /* .match-tab {
             background-color: #3a8e47;
         }
 
@@ -93,6 +214,166 @@
         }
         .match-tab li.current {
             background-color: #136404;
+        }*/
+         * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ul.caimao-tab {
+            width: 100%;
+            height: 10vw;
+            display: flex; /*设置为flex布局*/
+            justify-content: center; /*水平居中*/
+            align-items: center; /*垂直居中*/
+            text-align: center;
+            font-size: 4vw;
+            border-bottom: 1px solid black;
+        }
+
+        .caimao-tab > li {
+            flex: 1;
+            -webkit-flex: 1;
+            -moz-box-flex: 1;
+            -ms-flex: 1;
+            border-right: 1px solid black;
+            cursor: pointer;
+        }
+
+        .caimao-tab > li:last-child {
+            border-right: none;
+        }
+
+        .caimao-tab li.current span {
+            border-bottom: 3px solid red;
+        }
+
+        .caimao-tab-article {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .caimao-tab-article > div {
+            transition: transform 300ms linear;
+            width: 400%;
+            display: flex; /*设置为flex布局*/
+        }
+
+        .caimao-tab-article > div[data-index='2'] {
+            transform: translate(-25%, 0);
+        }
+
+        .caimao-tab-article > div[data-index='3'] {
+            transform: translate(-50%, 0);
+        }
+
+        .caimao-tab-article > div > div {
+            flex: 1;
+            -webkit-flex: 1;
+            -moz-box-flex: 1;
+            -ms-flex: 1;
+           
+        }
+
+       /* h1 {
+            text-align: center;
+            font-size: 5vw;
+            line-height: 50vw;
+        }*/
+        #m{
+            text-align: center;
+            width: 100%;
+            height: 10%;
+            background-color: red;
+        }
+        #m2{
+             width: 100%;
+            height: 10%;
+            background-color: yellow;
+        }
+        .m2_s{
+            width: 20%;
+            height: 100%;
+        }
+        #m3{
+            width: 100%;
+        }
+        #m3_ul{
+            list-style-type: none;
+        }
+        .m3_li{
+            width: 100%;
+            height: 20px;
+        }
+        #m3_host{
+            float: left;
+            width: 40%;
+            height: 20px;
+        }
+        #m3_host > span{
+           float: left;
+           font-size: 10px;
+        }
+        #m3_host > img{
+            width: 20px;
+            height: 20px;
+            float: right;
+        }
+        #m3_mid{
+            float: left;
+            text-align: center;
+            width: 20%;
+            height: 20px;
+        }
+        #m3_guest{
+            float: left;
+            width: 40%;
+            height: 20px;
+        }
+        #m3_guest > span{
+            float: right;
+            font-size: 10px;
+        }
+        #m3_guest > img{
+            width: 20px;
+            height: 20px;
+            float: left;
+        }
+        #m4{
+            text-align: center;
+            width: 100%;
+            height: 10%;
+            background-color: red;
+        }
+        #m5{
+            width: 100%;
+            text-align: center;
+        }
+        #m5_ul{
+            list-style-type: none;
+        }
+        .m5_li{
+            width: 100%;
+            height: 20px;
+        }
+        #m5_host{  
+            float: left;
+            width: 40%;
+            height: 20px;
+        }
+        #m5_mid{
+            float: left;
+            width: 20%;
+            height: 20px;
+        }
+        #m5_guest{
+            float: left;
+            width: 40%;
+            height: 20px;
         }
     </style>
 </head>
@@ -100,32 +381,80 @@
     <!-- 头部 比赛信息 -->
     <div>
         <div id="match-info" class="match-info clearfix">
-    <div class="match-info-host">
-        <div class="team-logo-box">
-            <img src="http://img1.fcaimao.com/logo/fteam/2/t_213.png">
+                <!-- 填充头部 比赛信息 -->
         </div>
-        <p>曼城(主)</p>
-    </div>
-    <div class="match-info-time">
-        <div class="match-info-time-box">
-            <p>3 : 1</p>
-        </div>
-        <p>11-12 00:30</p>
-    </div>
-    <div class="match-info-guest">
-        <div class="team-logo-box">
-            <img src="http://img1.fcaimao.com/logo/fteam/2/t_212.png">
-        </div>
-        <p>曼联(客)</p>
-    </div>
-</div>
-        <ul id="match-tab" class="match-tab clearfix">
-            <li data-type="1" class="current">实况</li>
-            <li class="" data-type="2">分析</li>
-            <li data-type="3">赔率</li>
+        <ul id="tab0" class="caimao-tab clearfix" data-target="#content0">
+            <li data-index="1" class="current" ><span>实况</span></li>
+            <li data-index="2"><span>分析</span></li>
+            <li data-index="3"><span>赔率</span></li>
         </ul>
     </div>
-    <article id="match-content">
-        <!-- 内容 -->
+   <article id="article0" class="caimao-tab-article">
+    <div id="content0" data-index="1">
+        <div style="background-color: #17b03b;height: 100%">
+            <div id="m">赛况</div>
+            <div id="m2">
+                <span class="m2_s">1</span>
+                <span class="m2_s">2</span>
+                <span class="m2_s">3</span>
+                <span class="m2_s">4</span>
+                <span class="m2_s">5</span>
+            </div>
+            <div id="m3">
+                <ul id="m3_ul">
+                    <!-- 赛况 -->
+                </ul>
+            </div>
+            <div id="m4">技术统计</div>
+            <div id="m5">
+                <ul id="m5_ul">
+                   <!-- 技术统计 -->
+                </ul>
+            </div>
+        </div>
+        <div style="background-color: #F1A1A1">
+            <h1>我是分析</h1>
+        </div>
+        <div style="background-color: #FF9300">
+            <ul id="tab3" class="caimao-tab clearfix" data-target="#content3">
+                <li data-index="1" class="current" style="color:#5A6FB1"><span>欧赔</span></li>
+                <li data-index="2" style="color: #bdd080;"><span>亚赔</span></li>
+            </ul>
+            <article id="article3" class="caimao-tab-article">
+                <div id="content3" data-index="1">
+                    <div style="background-color: #5A6FB1">
+                        <h1>我是欧赔</h1>
+                    </div>
+                    <div style="background-color: #bdd080">
+                        <h1>我是亚赔</h1>
+                    </div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </article>
+        </div>
+        <div></div>
+    </div>
     </article>
-</body></html>
+    <script type="application/javascript">
+
+      $(function () {
+        //注册标签栏的点击事件
+        $(document).on('click', '.caimao-tab > li', function () {
+            var li = $(this);
+            if (!li.hasClass('current')) {
+                //修改当前标签
+                li.parent().children().removeClass('current');
+                li.addClass('current');
+
+                /*
+                修改具体内容div的 data-index
+                css中 写的是 属性选择器  .caimao-tab-article > div[data-index='2']
+                */
+                $(li.parent().attr("data-target")).attr("data-index", li.attr("data-index"));
+            }
+        });
+    });
+    </script>
+</body>
+</html>
